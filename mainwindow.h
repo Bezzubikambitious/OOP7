@@ -18,14 +18,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_push_clicked();
 
 
 
 private:
     Ui::MainWindow *ui;
-    Set m1;
-    Set m2;
-    Set res;
+   // Set m1;
+   // Set m2;
+   // Set res;
 };
 #endif // MAINWINDOW_H

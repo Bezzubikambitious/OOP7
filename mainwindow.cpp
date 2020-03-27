@@ -17,10 +17,4 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_push_clicked()
-{
-
-
-
-}
 

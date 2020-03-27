@@ -1,6 +1,9 @@
 #include "set.h"
+#include "math.h"
 #include <iostream>
 using namespace std;
+
+Set::Set(){}
 
 Set::Set(int size)
 {
@@ -8,8 +11,18 @@ Set::Set(int size)
     this->n=new int[size];
     for(int i=0;i<size;i++)
     {
-        n[i]=i;
+        n[i]=0;
     }
+}
+Set::Set(int *array, int size )
+{
+    this->Size=size;
+    this->n=new int[size];
+    for(int i=0;i<size;i++)
+    {
+        n[i]=array[i];
+    }
+
 }
 
 Set::~Set()
@@ -28,64 +41,88 @@ Set::Set(const Set &other)
 }
 
 
-void Set::SetM1(int *m1)
+int GetValue(int i)
 {
-        n=m1;
-}
-void Set::SetM2(int *m2){
-        n=m2;
+    return n[i];
 }
 
 bool Set::check_in(int x)
 {
-        for(int i=0;i<Size;i++)
-                if(n[i]==x)
-        return true;
+    for(int i = 0; i<this->Size; i++)
+            {
+                if(x == this->n[i])
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
 
-            return false;
 
 
+
+int Set::force()
+{
+    int power = this->Size;
+    int bulean = pow(2, power);
+    return bulean;
 }
+
 
 void Set::add(int  x)
 {
 
-                if(!check_in(x))
-                {
-                        n[Size]=x;
-                        Size+=1;
-                        cout<<("Successfully");
-                }
-                else
-                        cout<<("Unsuccessfully");
+    int check_in = 0;
+    for(int i = 0; i<this->Size; i++)
+    {
+        if(this->check_in(x))
+        {
+            check_in = 1;
+        }
+    }
+    if(!check_in)
+    {
+        this->Size = this->Size+1;
+        this->n[this->Size-1] = x;
+    }
+
 
 }
 
 void Set::del(int x)
-{
-        bool ok;
-        ok=false;
-        if(Size!=0)
-        {
-                for(int i=0;i<Size;i++)
+{ 
+    Set *m1 = new Set(this->GetLength()-1);
+            int k = 0;
+            for(int i = 0; i<this->Size; i++)
+            {
+                if(this->n[i] != x)
                 {
-                        if(n[i]==x)
-                        {
-                                for(int j=i;j<Size;j++)
-                                {
-                                        n[j]=n[j+1];
-                                }
-                                Size-=1;
-                                ok=true;;
-                        }
-
+                    m1->n[k] = this->n[i];
+                    k++;
                 }
-                if(ok)
-                        cout<<("Successfully");
-        }
-        else
-                cout<<("Impossible");
+            }
+            m1->SetLength(k);
+            return m1;
 }
+
+int* Get_Set()
+    {
+        int *set = this->n;
+        return set;
+    }
+
+
+int GetLength()
+{
+    int length = this->Size;
+    return length;
+}
+
+void SetLength(int length)
+{
+    this->Size = length;
+}
+
 
 void Set::max()
 {
@@ -97,7 +134,7 @@ void Set::max()
         {
             max = n[i];
         }
-    }
+    } 
 }
 
 void Set::min()
@@ -112,32 +149,92 @@ void Set::min()
     }
 }
 
-ostream &operator<<(ostream &s, const Set &p)
-{
-   if (p.Size!=0){
-   s<<"(";
-   for (int i=0;i<p.Size-1;i++){
-      s<<p.n[i]<<",";
-      }
-      s<<p.n[p.Size-1];
-      }
-   return s<<")";
-}
-
-istream &operator>>(istream &s, Set &p)
-{
-  int tmp;
-  char c;
-  s>>c;
-
-  while(c!=')')
+Set operator+(Set m1)
   {
-    s>>tmp>> c;
-    p.add(tmp);                                 //тут питання з едд
-    }
-    return s;
-
+      Set *m2 = new Set(this->Size + m1.Size);
+      for(int i = 0; i<this->Size; i++)
+      {
+          if(!(m2->check_in(this->n[i])))
+          {
+              m2->n[k] = this->n[i];
+              k++;
+          }
+       }
+      for(int j = 0; j < m1.Size; j++)
+      {
+          if(!m2->Check_in(m1.n[j]))
+          {
+               m2->n[k] = m1.n[j];
+               k++;
+          }
+      }
+      m2->Size = k;
+      return *m2;
   }
+
+  Set operator-(Set m1)
+  {
+      Set *m2 = new Set(this->Size);
+      int k =0;
+      for(int i = 0; i<this->Size; i++)
+      {
+          for(int j = 0; j<m1.Size; j++)
+          {
+              if(this->n[i] == m1.n[j])
+              {
+                  m2->n[k] = this->n[i];
+                  k++;
+                  break;
+              }
+          }
+      }
+      m2->Size = k;
+      return *m2;
+  }
+
+  int operator==(Set m1)
+  {
+      int check_in = 0;
+      if(this->Size != m1.Size)
+          return 0;
+      for(int i = 0; i<this->Size; i++)
+      {
+          for(int j = 0; j<m1.Size; j++)
+          {
+              if(this->n[i] == m1.n[j])
+              {
+                  check_in++;
+              }
+          }
+      }
+      if(check_in == this->Size)
+          return 1;
+      else
+          return 0;
+  }
+/*
+  Set& operator=(const Set& obj1)
+      {
+      if (m_num != obj1.m_num)
+          {
+          if (obj1.m_length != m_length)
+             {
+              delete[] m_num; // Видаляємо старі елементи
+              m_length = obj1.m_length;  // встановлюєм новий розмір масиву
+              m_num = new int[obj1.m_length];  // виділяємо нову памёять для нашого масиву
+             }
+          // Копіюємо елементи в потрібний нам масив
+          int *p = m_num + m_length;
+          int *q = obj1.m_num + m_length;
+          while (p > m_num)
+               *--p = *--q;
+          }
+      return *this;
+      }
+*/
+
+
+
 
 std::string Set::get_res()
 {
